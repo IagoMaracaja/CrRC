@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">CR-RC</string>
+
+
+    <string name="building">Building</string>
+    <string name="troop">Troop</string>
+    <string name="spell">Speel</string>
+    <string name="commom">Common</string>
+    <string name="legendary">Legendary</string>
+    <string name="rare">Rare</string>
+    <string name="epic">Epic</string>
+
+
+
+    <string name="rarity_filter">Rarity Filter</string>
+    <string name="type_filter">Type Filter</string>
+
+</resources>
