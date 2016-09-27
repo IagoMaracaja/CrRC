@@ -9,18 +9,20 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import br.icmob.clashroyalerandomcards.model.Card;
+
 /**
  * Created by iago on 23/09/16.
  */
 
 public class CardAdapter extends BaseAdapter {
-    private Integer[] mCardValues;
+    private List<Card> mCards;
     private Context context;
     private int mLayoutId;
 
-    public CardAdapter(Context context, Integer[] cardValues, int layoutId) {
+    public CardAdapter(Context context, List<Card> cardValues, int layoutId) {
         this.context = context;
-        this.mCardValues = cardValues;
+        this.mCards = cardValues;
         this.mLayoutId = layoutId;
     }
 
@@ -37,7 +39,7 @@ public class CardAdapter extends BaseAdapter {
 
             ImageView imageView = (ImageView) gridView
                     .findViewById(R.id.grid_item_image);
-            imageView.setImageResource(mCardValues[position]);
+            imageView.setImageResource(mCards.get(position).getmId());
         } else {
             gridView = (View) convertView;
         }
@@ -45,9 +47,6 @@ public class CardAdapter extends BaseAdapter {
         return gridView;
     }
 
-    public Integer[] getmCardValues() {
-        return mCardValues;
-    }
 
     public Context getContext() {
         return context;
@@ -67,7 +66,7 @@ public class CardAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mCardValues.length;
+        return mCards.size();
     }
 
     @Override
@@ -79,4 +78,12 @@ public class CardAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return 0;
     }
+
+    public List<Card> getmCards() {
+        return mCards;
     }
+
+    public void setmCards(List<Card> mCards) {
+        this.mCards = mCards;
+    }
+}

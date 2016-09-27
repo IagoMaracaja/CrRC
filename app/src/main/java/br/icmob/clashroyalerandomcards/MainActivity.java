@@ -14,6 +14,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.List;
+
+import br.icmob.clashroyalerandomcards.business.CardBusiness;
+import br.icmob.clashroyalerandomcards.model.Card;
+
 public class MainActivity extends AppCompatActivity {
 
     /**
@@ -24,14 +29,6 @@ public class MainActivity extends AppCompatActivity {
      * Grid view of fixed cards
      */
     private GridView mGridViewFixed;
-    /**
-     * Items of card lists
-     */
-    private Integer[] mNumbersOfCards;
-    /**
-     * Items of fixed card lists
-     */
-    private Integer[] mNumbersOfFixed;
     /**
      * Alert Dialog for logout action
      */
@@ -48,7 +45,12 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mIvOk;
     private ImageView mIvBlock;
     private ImageView mIvRefresh;
+    private TextView mTvCost;
     private CardAdapter mCardAdapterFixed;
+    private FilterAdapter mFilterRarityAdapter;
+    private FilterAdapter mFilterTypeAdapter;
+
+    private List<Card> mRandomCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startGridView() {
         mGridView = (GridView) findViewById(R.id.grid_cards);
-        CardAdapter cardAdapter = new CardAdapter(this, createMock(), R.layout.cards_item_adapter);
+        CardAdapter cardAdapter = new CardAdapter(this, generateRandomCards(), R.layout.cards_item_adapter);
         mGridView.setAdapter(cardAdapter);
 
 
@@ -80,7 +82,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                callCardOptionView();
+                Card card = mRandomCards.get(position);
+                showCardOptions(card);
             }
         });
 
@@ -92,14 +95,11 @@ public class MainActivity extends AppCompatActivity {
     private void startFixedGridView() {
         mGridViewFixed = (GridView) findViewById(R.id.grid_fixed_cads);
 
-        mCardAdapterFixed = new CardAdapter(this, createMockToFixedCards(),
+        mCardAdapterFixed = new CardAdapter(this, getFixedCards(),
                 R.layout.cards_fixed_item_adapter);
 
         mGridViewFixed.setAdapter(mCardAdapterFixed);
     }
-
-    private FilterAdapter mFilterRarityAdapter;
-    private FilterAdapter mFilterTypeAdapter;
 
     /**
      * Fill dialog filter
@@ -112,10 +112,10 @@ public class MainActivity extends AppCompatActivity {
         mGridViewFilterType = (GridView) view.findViewById(R.id.grid_cards_filter_type);
 
 
-        mFilterRarityAdapter = new FilterAdapter(this,Utils.generateRarityFilter(this) ,
+        mFilterRarityAdapter = new FilterAdapter(this, Utils.generateRarityFilter(this),
                 R.layout.filter_item_adapter);
 
-        mFilterTypeAdapter = new FilterAdapter(this,Utils.generateTypeFilter(this) ,
+        mFilterTypeAdapter = new FilterAdapter(this, Utils.generateTypeFilter(this),
                 R.layout.filter_item_adapter);
 
         mGridViewFilterRarity.setAdapter(mFilterRarityAdapter);
@@ -134,21 +134,22 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Listener for filter
+     *
      * @param isRarity
      * @return
      */
-    public AdapterView.OnItemClickListener changeEnable(final boolean isRarity){
+    public AdapterView.OnItemClickListener changeEnable(final boolean isRarity) {
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                if(isRarity){
+                if (isRarity) {
                     boolean oldStatus = mFilterRarityAdapter.getmFilters().get(position)
                             .isEnable();
                     Filter filter = mFilterRarityAdapter.getmFilters().get(position);
                     filter.setEnable(!oldStatus);
                     mGridViewFilterRarity.setAdapter(mFilterRarityAdapter);
-                }else{
+                } else {
                     boolean oldStatus = mFilterTypeAdapter.getmFilters().get(position)
                             .isEnable();
                     Filter filter = mFilterTypeAdapter.getmFilters().get(position);
@@ -160,45 +161,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Mock for development solutions
+     * generate random cards
      *
-     * @return
+     * @return list of random cards
      */
-    public Integer[] createMock() {
-        mNumbersOfCards = new Integer[8];
+    public List<Card> generateRandomCards() {
+        mRandomCards = new CardBusiness().getCardsRandom();
+        fillAverageCost(Utils.getAverageCost(mRandomCards));
+        return mRandomCards;
+    }
 
-        for (int i = 0; i < 8; i++) {
-            mNumbersOfCards[i] = R.drawable.arqueiras;
-        }
-        return mNumbersOfCards;
+    private void fillAverageCost(String cost){
+        mTvCost.setText(cost);
     }
 
     /**
-     * Mock for development solutions (Fixed Cards)
+     * get fixed cards
      *
-     * @return
+     * @return list of fixed cards
      */
-    public Integer[] createMockToFixedCards() {
-        mNumbersOfFixed = new Integer[3];
-        for (int i = 0; i < 3; i++) {
-            mNumbersOfFixed[i] = R.drawable.fixed_card;
-        }
-        return mNumbersOfFixed;
+    public List<Card> getFixedCards() {
+        return new CardBusiness().getFixedCards();
     }
 
     /**
      * Open a dialog to show option of card.
      */
-    private void callCardOptionView() {
+    public void showCardOptions(final Card card) {
         LayoutInflater li = getLayoutInflater();
 
         final View view = li.inflate(R.layout.card_item_view, null);
+        TextView cardTitle = (TextView) view.findViewById(R.id.tv_card_title);
+        TextView cardRarity = (TextView) view.findViewById(R.id.tv_card_rarity);
+        TextView cardType = (TextView) view.findViewById(R.id.tv_card_type);
+        TextView cardDescription = (TextView) view.findViewById(R.id.tv_card_description);
+        ImageView cardImage = (ImageView) view.findViewById(R.id.iv_card);
+
+        cardTitle.setText(card.getmName());
+        cardRarity.setText(card.getmRarity().name());
+        cardType.setText(card.getmType().name());
+        cardDescription.setText(card.getmDescription());
+        cardImage.setImageResource(card.getmId());
+
         view.findViewById(R.id.btn_fix).setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                String cardName = ((TextView) view.findViewById(R.id.tv_card_title)).getText().toString();
-
-                Integer[] refreshItems = mCardAdapterFixed.getmCardValues();
-                refreshItems[0] = R.drawable.bomber;
+                List<Card> refreshItems = mCardAdapterFixed.getmCards();
+                refreshItems.add(card);
                 mCardAdapterFixed = new CardAdapter(MainActivity.this, refreshItems,
                         R.layout.cards_fixed_item_adapter);
                 mGridViewFixed.setAdapter(mCardAdapterFixed);
@@ -224,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
         mIvBlock = (ImageView) findViewById(R.id.iv_block);
         mIvOk = (ImageView) findViewById(R.id.iv_ok);
         mIvRefresh = (ImageView) findViewById(R.id.iv_refresh);
+        mTvCost = (TextView)findViewById(R.id.tv_average_elixir_cost);
 
 
         mIvBlock.setOnClickListener(new View.OnClickListener() {
@@ -249,6 +258,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Animation of refresh button
+     * @param refresh
+     * @return
+     */
     private Animation refreshAnim(ImageView refresh) {
         Animation animation = new RotateAnimation(0.0f, 360.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,

@@ -3,8 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/title_shape"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_card_title"
@@ -15,6 +14,7 @@
         android:text="Bárbaro"
         android:textColor="#f3f3f3"
         android:textSize="20sp"
+        android:layout_marginTop="10dp"
         android:textStyle="bold" />
 
     <LinearLayout
@@ -24,6 +24,7 @@
 
 
         <ImageView
+            android:id="@+id/iv_card"
             android:layout_width="170dp"
             android:layout_height="170dp"
             android:layout_marginBottom="5dp"
@@ -56,6 +57,7 @@
                     android:layout_weight="1"
                     android:fontFamily="sans-serif-medium"
                     android:text="Comum"
+                    android:textSize="12sp"
                     android:textColor="#f3f3f3"
                     android:textStyle="bold" />
 
@@ -82,6 +84,7 @@
                     android:layout_weight="1"
                     android:fontFamily="sans-serif-medium"
                     android:text="Tropa"
+                    android:textSize="12sp"
                     android:textColor="#f3f3f3"
                     android:textStyle="bold" />
 
@@ -120,7 +123,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="10dp">
 
         <Button
             android:id="@+id/btn_fix"
