@@ -77,7 +77,7 @@ public final class Utils {
     }
 
     /**
-     * Doa a average cost of a card list;
+     * Do a average cost of a card list;
      * @param cards list of cards
      * @return average cost
      */

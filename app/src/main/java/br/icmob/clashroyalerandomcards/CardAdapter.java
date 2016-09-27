@@ -14,7 +14,6 @@ import br.icmob.clashroyalerandomcards.model.Card;
 /**
  * Created by iago on 23/09/16.
  */
-
 public class CardAdapter extends BaseAdapter {
     private List<Card> mCards;
     private Context context;

@@ -7,7 +7,6 @@ import br.icmob.clashroyalerandomcards.enuns.CardTypeEnum;
 /**
  * Created by Bruno on 23/09/2016.
  */
-
 public class Card {
     private int mId;
     private String mName;
@@ -16,7 +15,7 @@ public class Card {
     private CardRarityEnum mRarity;
     private String mDescription;
 
-    public Card(int mId, String mName, int mCost, CardTypeEnum mType, CardRarityEnum mRarity, String mDescription){
+    public Card(int mId, String mName, int mCost, CardTypeEnum mType, CardRarityEnum mRarity, String mDescription) {
         this.mId = mId;
         this.mName = mName;
         this.mCost = mCost;
@@ -24,7 +23,21 @@ public class Card {
         this.mRarity = mRarity;
         this.mDescription = mDescription;
     }
-    public Card(){}
+
+    public Card() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Card)) {
+            return false;
+        } else {
+            Card card = (Card) o;
+            if (card.getmId() == this.getmId()) return true;
+            else return false;
+        }
+    }
+
     public int getmId() {
         return mId;
     }
