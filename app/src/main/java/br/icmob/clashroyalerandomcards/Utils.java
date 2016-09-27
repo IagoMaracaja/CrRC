@@ -1,9 +1,19 @@
 package br.icmob.clashroyalerandomcards;
 
+import android.app.Activity;
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import br.icmob.clashroyalerandomcards.business.CardBusiness;
+import br.icmob.clashroyalerandomcards.model.Card;
 
 /**
  * Created by iago on 26/09/16.
@@ -11,8 +21,7 @@ import java.util.List;
 
 public final class Utils {
 
-
-    public static List<Filter> generateTypeFilter(Context context){
+    public static List<Filter> generateTypeFilter(Context context) {
         List<Filter> filters = new ArrayList<>();
         Filter building = new Filter();
         building.setEnable(true);
@@ -36,7 +45,7 @@ public final class Utils {
         return filters;
     }
 
-    public static List<Filter> generateRarityFilter(Context context){
+    public static List<Filter> generateRarityFilter(Context context) {
         List<Filter> filters = new ArrayList<>();
         Filter common = new Filter();
         common.setEnable(true);
@@ -66,4 +75,20 @@ public final class Utils {
 
         return filters;
     }
+
+    /**
+     * Doa a average cost of a card list;
+     * @param cards list of cards
+     * @return average cost
+     */
+    public static String getAverageCost(List<Card> cards){
+        double result = 0.0;
+        for (int i = 0; i < cards.size(); i++) {
+            result += cards.get(i).getmCost();
+        }
+        result /= cards.size();
+        String value = String.format("%.1f", result);
+        return value;
+    }
+
 }

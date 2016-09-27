@@ -143,4 +143,8 @@ public class CardBusiness {
             if(card.getmType()==type && !cards.contains(card)){cards.add(card);}
         }
     }
+
+    public List<Card> getFixedCards(){
+        return new ArrayList<Card>();
+    }
 }
