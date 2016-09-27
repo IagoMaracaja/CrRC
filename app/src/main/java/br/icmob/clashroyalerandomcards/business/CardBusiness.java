@@ -9,6 +9,7 @@ import br.icmob.clashroyalerandomcards.enuns.CardRarityEnum;
 import br.icmob.clashroyalerandomcards.enuns.CardTypeEnum;
 import br.icmob.clashroyalerandomcards.model.Card;
 import br.icmob.clashroyalerandomcards.service.ReadCardService;
+import br.icmob.clashroyalerandomcards.singleton.CardsFixed;
 
 /**
  * Created by Bruno on 23/09/2016.
@@ -17,13 +18,14 @@ import br.icmob.clashroyalerandomcards.service.ReadCardService;
 public class CardBusiness {
 
     private List<Card> cards;
+    private CardsFixed cardsFixed = CardsFixed.getInstance();
 
     public CardBusiness(){
         cards = ReadCardService.getCards();
     }
 
     /**
-     * Retorna todas as cartas
+     * Returna todas as cartas
      * @return
      */
     public List<Card> getAllCards(){
@@ -72,7 +74,40 @@ public class CardBusiness {
         cards.addAll(cardsRandom);
         return cardsRandom;
     }
+    public List<Card> getCardsRandomAndFixed(){
+        return getCardsRandomAndFixed(8);
+    }
+    public List<Card> getCardsRandomAndFixed(int qttCards){
+        if(qttCards>this.cards.size()){
+            return null;
+        }
+        Random random = new Random();
+        List<Card> cardsRandom = new ArrayList<Card>();
+        cardsRandom.addAll(getFixedCards());
+        int indice;
+        for(int i =0;i<qttCards-getFixedCards().size();i++){
+            indice = random.nextInt(cards.size());
+            if(cardsRandom.contains(this.cards.get(indice))){
+                i--;
+                cards.remove(indice);
+            }else{
+                cardsRandom.add(this.cards.get(indice));
+                cards.remove(indice);
+            }
 
+        }
+        cards.addAll(cardsRandom);
+        return cardsRandom;
+    }
+    public List<Card> getFixedCards(){
+        return cardsFixed.getFixedCards();
+    }
+    public void fixCard(Card card){
+        cardsFixed.fixCard(card);
+    }
+    public void removeFixedCard(Card card){
+        cardsFixed.removeFixedCard(card);
+    }
     /**
      * Remove todas as cartas do tipo desejado
      * 1-cartas comuns
