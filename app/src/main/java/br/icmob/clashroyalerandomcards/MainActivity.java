@@ -13,14 +13,17 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import br.icmob.clashroyalerandomcards.business.CardBusiness;
 import br.icmob.clashroyalerandomcards.model.Card;
 
+/**
+ * Created by iago on 23/09/16.
+ */
 public class MainActivity extends AppCompatActivity {
-
     /**
      * Grid View
      */
@@ -41,15 +44,37 @@ public class MainActivity extends AppCompatActivity {
      * Grid View Type Filter
      */
     private GridView mGridViewFilterType;
-
+    /**
+     * ImageView for ok button
+     */
     private ImageView mIvOk;
+    /**
+     * ImageView for block button
+     */
     private ImageView mIvBlock;
+    /**
+     * ImageView for refresh button
+     */
     private ImageView mIvRefresh;
+    /**
+     * TextView for elixir average vost
+     */
     private TextView mTvCost;
+    /**
+     * Adapter for fixed cards
+     */
     private CardAdapter mCardAdapterFixed;
+    /**
+     * Rarity filter adapter
+     */
     private FilterAdapter mFilterRarityAdapter;
+    /**
+     * Type filter adapter
+     */
     private FilterAdapter mFilterTypeAdapter;
-
+    /**
+     * List of random cards
+     */
     private List<Card> mRandomCards;
 
     @Override
@@ -60,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
         initializeMenu();
         startGridView();
         startFixedGridView();
-
 
     }
 
@@ -166,12 +190,17 @@ public class MainActivity extends AppCompatActivity {
      * @return list of random cards
      */
     public List<Card> generateRandomCards() {
-        mRandomCards = new CardBusiness().getCardsRandom();
+        mRandomCards = new CardBusiness().getCardsRandomAndFixed();
         fillAverageCost(Utils.getAverageCost(mRandomCards));
         return mRandomCards;
     }
 
-    private void fillAverageCost(String cost){
+    /**
+     * Set the average cost on TextView
+     *
+     * @param cost
+     */
+    private void fillAverageCost(String cost) {
         mTvCost.setText(cost);
     }
 
@@ -206,12 +235,17 @@ public class MainActivity extends AppCompatActivity {
         view.findViewById(R.id.btn_fix).setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 List<Card> refreshItems = mCardAdapterFixed.getmCards();
-                refreshItems.add(card);
-                mCardAdapterFixed = new CardAdapter(MainActivity.this, refreshItems,
-                        R.layout.cards_fixed_item_adapter);
-                mGridViewFixed.setAdapter(mCardAdapterFixed);
+                if (refreshItems.size() >= Constants.MAX_FIXED_CARDS) {
+                    Toast.makeText(MainActivity.this, getString(R.string.max_fixed_error_message),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    refreshItems.add(card);
+                    mCardAdapterFixed = new CardAdapter(MainActivity.this, refreshItems,
+                            R.layout.cards_fixed_item_adapter);
+                    mGridViewFixed.setAdapter(mCardAdapterFixed);
 
-                mAlertDialog.dismiss();
+                    mAlertDialog.dismiss();
+                }
             }
         });
 
@@ -228,11 +262,14 @@ public class MainActivity extends AppCompatActivity {
         mAlertDialog.show();
     }
 
+    /**
+     * Initialize menu component
+     */
     private void initializeMenu() {
         mIvBlock = (ImageView) findViewById(R.id.iv_block);
         mIvOk = (ImageView) findViewById(R.id.iv_ok);
         mIvRefresh = (ImageView) findViewById(R.id.iv_refresh);
-        mTvCost = (TextView)findViewById(R.id.tv_average_elixir_cost);
+        mTvCost = (TextView) findViewById(R.id.tv_average_elixir_cost);
 
 
         mIvBlock.setOnClickListener(new View.OnClickListener() {
@@ -260,6 +297,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Animation of refresh button
+     *
      * @param refresh
      * @return
      */

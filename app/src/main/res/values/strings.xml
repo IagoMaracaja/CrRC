@@ -10,9 +10,9 @@
     <string name="rare">Rare</string>
     <string name="epic">Epic</string>
 
-
-
     <string name="rarity_filter">Rarity Filter</string>
     <string name="type_filter">Type Filter</string>
+
+    <string name="max_fixed_error_message"> Máximo de cartas fixas atingido</string>
 
 </resources>

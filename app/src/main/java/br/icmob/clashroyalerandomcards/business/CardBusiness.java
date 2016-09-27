@@ -77,6 +77,7 @@ public class CardBusiness {
     public List<Card> getCardsRandomAndFixed(){
         return getCardsRandomAndFixed(8);
     }
+
     public List<Card> getCardsRandomAndFixed(int qttCards){
         if(qttCards>this.cards.size()){
             return null;
@@ -179,7 +180,4 @@ public class CardBusiness {
         }
     }
 
-    public List<Card> getFixedCards(){
-        return new ArrayList<Card>();
-    }
 }
