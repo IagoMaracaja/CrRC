@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
      * @return list of random cards
      */
     public List<Card> generateRandomCards() {
-        mRandomCards = new CardBusiness().getCardsRandomAndFixed();
+        mRandomCards = new CardBusiness(this).getCardsRandomAndFixed();
         fillAverageCost(Utils.getAverageCost(mRandomCards));
         return mRandomCards;
     }
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
      * @return list of fixed cards
      */
     public List<Card> getFixedCards() {
-        return new CardBusiness().getFixedCards();
+        return new CardBusiness(this).getFixedCards();
     }
 
     /**

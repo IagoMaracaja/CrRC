@@ -5,10 +5,10 @@ package br.icmob.clashroyalerandomcards.enuns;
  */
 
 public enum CardRarityEnum {
-    COMMON(1),RARA(2),EPIC(3),LEGENDARY(4);
+    COMMON("Comum"),RARA("Rara"),EPIC("Épica"),LEGENDARY("Lendária");
 
-    public int rarityCard;
-    CardRarityEnum(int value) {
+    public String rarityCard;
+    CardRarityEnum(String value) {
         rarityCard = value;
     }
 }
