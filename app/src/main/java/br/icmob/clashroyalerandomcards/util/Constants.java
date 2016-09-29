@@ -1,4 +1,4 @@
-package br.icmob.clashroyalerandomcards;
+package br.icmob.clashroyalerandomcards.util;
 
 /**
  * Created by iago on 27/09/16.

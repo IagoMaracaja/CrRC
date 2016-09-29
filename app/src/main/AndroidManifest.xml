@@ -2,19 +2,31 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.icmob.clashroyalerandomcards">
 
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.INTERNAL_SYSTEM_WINDOW" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".view.MainActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="br.icmob.clashroyalerandomcards.view.DeckView"
+            android:excludeFromRecents="true"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Translucent" />
+
+        <service android:name="br.icmob.clashroyalerandomcards.service.ChatHeadService"></service>
     </application>
+
 
 </manifest>

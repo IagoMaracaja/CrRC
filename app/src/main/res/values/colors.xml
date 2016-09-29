@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#503e3e</color>
-    <color name="colorPrimaryDark">#743939</color>
-    <color name="colorAccent">#664853</color>
+    <color name="colorPrimary">#70a3ca</color>
+    <color name="colorPrimaryDark">#376f99</color>
+    <color name="colorAccent">#197dca</color>
+
+    <color name="transparent">#00000000 </color>
+
+    <color name="elixir_info">#25140a</color>
 </resources>

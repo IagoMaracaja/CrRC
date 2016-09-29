@@ -1,4 +1,4 @@
-package br.icmob.clashroyalerandomcards;
+package br.icmob.clashroyalerandomcards.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,22 +6,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import java.util.List;
+
+import br.icmob.clashroyalerandomcards.R;
+import br.icmob.clashroyalerandomcards.model.Card;
 
 /**
  * Created by iago on 23/09/16.
  */
-
-public class FilterAdapter extends BaseAdapter {
-    private List<Filter> mFilters;
+public class CardAdapter extends BaseAdapter {
+    private List<Card> mCards;
     private Context context;
     private int mLayoutId;
 
-    public FilterAdapter(Context context, List<Filter> filtersValues, int layoutId) {
+    public CardAdapter(Context context, List<Card> cardValues, int layoutId) {
         this.context = context;
-        this.mFilters = filtersValues;
+        this.mCards = cardValues;
         this.mLayoutId = layoutId;
     }
 
@@ -38,22 +39,7 @@ public class FilterAdapter extends BaseAdapter {
 
             ImageView imageView = (ImageView) gridView
                     .findViewById(R.id.grid_item_image);
-            imageView.setImageResource(mFilters.get(position).getResourceId());
-
-
-            ImageView enabledView = (ImageView) gridView
-                    .findViewById(R.id.iv_filter);
-
-            if(mFilters.get(position).isEnable()){
-                enabledView.setImageResource(R.drawable.ic_enable);
-            }else{
-                enabledView.setImageResource(R.drawable.ic_disable);
-            }
-
-            TextView textView = (TextView) gridView
-                    .findViewById(R.id.filter_description);
-            textView.setText(mFilters.get(position).getDescription());
-
+            imageView.setImageResource(mCards.get(position).getmId());
         } else {
             gridView = (View) convertView;
         }
@@ -80,7 +66,7 @@ public class FilterAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mFilters.size();
+        return mCards.size();
     }
 
     @Override
@@ -93,11 +79,11 @@ public class FilterAdapter extends BaseAdapter {
         return 0;
     }
 
-    public List<Filter> getmFilters() {
-        return mFilters;
+    public List<Card> getmCards() {
+        return mCards;
     }
 
-    public void setmFilters(List<Filter> mFilters) {
-        this.mFilters = mFilters;
+    public void setmCards(List<Card> mCards) {
+        this.mCards = mCards;
     }
 }
