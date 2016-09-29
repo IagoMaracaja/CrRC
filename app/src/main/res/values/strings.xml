@@ -13,6 +13,10 @@
     <string name="rarity_filter">Rarity Filter</string>
     <string name="type_filter">Type Filter</string>
 
+    <string name="pin">Fixar</string>
+    <string name="unpin">Desfixar</string>
+    <string name="ok">ok</string>
+
     <string name="max_fixed_error_message"> Máximo de cartas fixas atingido</string>
 
 </resources>

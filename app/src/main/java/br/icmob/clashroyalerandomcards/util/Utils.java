@@ -1,19 +1,15 @@
-package br.icmob.clashroyalerandomcards;
+package br.icmob.clashroyalerandomcards.util;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.AlertDialog;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.os.Build;
+import android.provider.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.icmob.clashroyalerandomcards.business.CardBusiness;
+import br.icmob.clashroyalerandomcards.R;
 import br.icmob.clashroyalerandomcards.model.Card;
+import br.icmob.clashroyalerandomcards.model.Filter;
 
 /**
  * Created by iago on 26/09/16.
@@ -76,6 +72,9 @@ public final class Utils {
         return filters;
     }
 
+
+    // TODO: 28/09/16 Refactoring below
+
     /**
      * Do a average cost of a card list;
      * @param cards list of cards
@@ -89,6 +88,20 @@ public final class Utils {
         result /= cards.size();
         String value = String.format("%.1f", result);
         return value;
+    }
+
+    public static String LogTag = "crrcService";
+    public static String EXTRA_MSG = "extra_msg";
+
+
+    public static boolean canDrawOverlays(Context context){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }else{
+            return Settings.canDrawOverlays(context);
+        }
+
+
     }
 
 }

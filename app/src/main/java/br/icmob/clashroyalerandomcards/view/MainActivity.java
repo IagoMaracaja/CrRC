@@ -1,6 +1,10 @@
-package br.icmob.clashroyalerandomcards;
+package br.icmob.clashroyalerandomcards.view;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -10,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.GridLayoutAnimationController;
 import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,13 +22,21 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import br.icmob.clashroyalerandomcards.R;
+import br.icmob.clashroyalerandomcards.adapter.CardAdapter;
+import br.icmob.clashroyalerandomcards.adapter.FilterAdapter;
 import br.icmob.clashroyalerandomcards.business.CardBusiness;
 import br.icmob.clashroyalerandomcards.model.Card;
+import br.icmob.clashroyalerandomcards.model.Filter;
+import br.icmob.clashroyalerandomcards.service.ChatHeadService;
+import br.icmob.clashroyalerandomcards.util.Constants;
+import br.icmob.clashroyalerandomcards.util.Utils;
 
 /**
  * Created by iago on 23/09/16.
  */
 public class MainActivity extends AppCompatActivity {
+    public static List<Card> mRandomCardsChoice;
     /**
      * Grid View
      */
@@ -76,11 +89,17 @@ public class MainActivity extends AppCompatActivity {
      * List of random cards
      */
     private List<Card> mRandomCards;
+    /**
+     * List of fixed cards
+     */
+    private List<Card> mFixedCards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkDrawOverlayPermission();
 
         initializeMenu();
         startGridView();
@@ -93,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startGridView() {
         mGridView = (GridView) findViewById(R.id.grid_cards);
-        CardAdapter cardAdapter = new CardAdapter(this, generateRandomCards(), R.layout.cards_item_adapter);
-        mGridView.setAdapter(cardAdapter);
+        initAdapter(mGridView, generateRandomCards(), R.layout.cards_item_adapter);
 
 
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.grid_item_anim);
@@ -114,6 +132,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Init adapter for grid view
+     *
+     * @param gridView component for adapter
+     * @param list     list of cards
+     * @param layout   id for layout
+     */
+    public void initAdapter(GridView gridView, List<Card> list, int layout) {
+        CardAdapter cardAdapter = new CardAdapter(this, list, layout);
+        gridView.setAdapter(cardAdapter);
+    }
+
+    /**
      * Start a fixed grid view
      */
     private void startFixedGridView() {
@@ -121,6 +151,16 @@ public class MainActivity extends AppCompatActivity {
 
         mCardAdapterFixed = new CardAdapter(this, getFixedCards(),
                 R.layout.cards_fixed_item_adapter);
+        mGridViewFixed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+
+                Card card = mFixedCards.get(position);
+                showCardOptions(card);
+            }
+        });
+
 
         mGridViewFixed.setAdapter(mCardAdapterFixed);
     }
@@ -191,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public List<Card> generateRandomCards() {
         mRandomCards = new CardBusiness().getCardsRandomAndFixed();
+        mRandomCardsChoice = mRandomCards;
         fillAverageCost(Utils.getAverageCost(mRandomCards));
         return mRandomCards;
     }
@@ -210,7 +251,8 @@ public class MainActivity extends AppCompatActivity {
      * @return list of fixed cards
      */
     public List<Card> getFixedCards() {
-        return new CardBusiness().getFixedCards();
+        mFixedCards = new CardBusiness().getFixedCards();
+        return mFixedCards;
     }
 
     /**
@@ -218,6 +260,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void showCardOptions(final Card card) {
         LayoutInflater li = getLayoutInflater();
+        final boolean isFixed = checkIsFixed(card);
 
         final View view = li.inflate(R.layout.card_item_view, null);
         TextView cardTitle = (TextView) view.findViewById(R.id.tv_card_title);
@@ -225,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         TextView cardType = (TextView) view.findViewById(R.id.tv_card_type);
         TextView cardDescription = (TextView) view.findViewById(R.id.tv_card_description);
         ImageView cardImage = (ImageView) view.findViewById(R.id.iv_card);
+        Button fixButton = (Button) view.findViewById(R.id.btn_fix);
 
         cardTitle.setText(card.getmName());
         cardRarity.setText(card.getmRarity().name());
@@ -232,19 +276,30 @@ public class MainActivity extends AppCompatActivity {
         cardDescription.setText(card.getmDescription());
         cardImage.setImageResource(card.getmId());
 
-        view.findViewById(R.id.btn_fix).setOnClickListener(new View.OnClickListener() {
+        if (isFixed) {
+            fixButton.setText(getString(R.string.unpin));
+        } else {
+            fixButton.setText(getString(R.string.pin));
+        }
+
+        fixButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 List<Card> refreshItems = mCardAdapterFixed.getmCards();
-                if (refreshItems.size() >= Constants.MAX_FIXED_CARDS) {
-                    Toast.makeText(MainActivity.this, getString(R.string.max_fixed_error_message),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    refreshItems.add(card);
-                    mCardAdapterFixed = new CardAdapter(MainActivity.this, refreshItems,
-                            R.layout.cards_fixed_item_adapter);
-                    mGridViewFixed.setAdapter(mCardAdapterFixed);
 
+                if (isFixed) {
+                    refreshItems.remove(card);
+                    initAdapter(mGridViewFixed, refreshItems, R.layout.cards_fixed_item_adapter);
                     mAlertDialog.dismiss();
+                } else {
+                    if (refreshItems.size() >= Constants.MAX_FIXED_CARDS) {
+                        Toast.makeText(MainActivity.this, getString(R.string.max_fixed_error_message),
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        refreshItems.add(card);
+                        initAdapter(mGridViewFixed, refreshItems, R.layout.cards_fixed_item_adapter);
+                        mAlertDialog.dismiss();
+                    }
+
                 }
             }
         });
@@ -260,6 +315,15 @@ public class MainActivity extends AppCompatActivity {
 
         mAlertDialog = builder.create();
         mAlertDialog.show();
+    }
+
+    private boolean checkIsFixed(Card card) {
+        for (Card c : mFixedCards) {
+            if (card.equals(c)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -281,8 +345,11 @@ public class MainActivity extends AppCompatActivity {
         mIvOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mIvBlock.setClickable(false);
-                mIvRefresh.setClickable(false);
+                mRandomCardsChoice = mRandomCards;
+                startService(new Intent(MainActivity.this, ChatHeadService.class));
+
+                /*mIvBlock.setClickable(false);
+                mIvRefresh.setClickable(false);*/
             }
         });
         mIvRefresh.setOnClickListener(new View.OnClickListener() {
@@ -310,6 +377,52 @@ public class MainActivity extends AppCompatActivity {
 
         refresh.setAnimation(animation);
         return animation;
+    }
+
+    @Override
+    protected void onResume() {
+        if (DeckView.active) {
+            DeckView.mDeckViewer.finish();
+        }
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (DeckView.active) {
+            DeckView.mDeckViewer.finish();
+        }
+        this.finish();
+        super.onPause();
+    }
+    /** code to post/handler request for permission */
+    public final static int REQUEST_CODE = 5463&0xffffff00;
+
+    public void checkDrawOverlayPermission() {
+        /** check if we already  have permission to draw over other apps */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                /** if not construct intent to request permission */
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                /** request permission via start activity for result */
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,  Intent data) {
+        /** check if received result code
+         is equal our requested code for draw permission  */
+        if (requestCode == REQUEST_CODE) {
+            /** if so check once again if we have permission */
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Settings.canDrawOverlays(this)) {
+
+                }
+            }
+        }
     }
 
 }
