@@ -230,7 +230,12 @@ public class MainActivity extends AppCompatActivity {
      * @return list of random cards
      */
     public List<Card> generateRandomCards() {
+<<<<<<< HEAD:app/src/main/java/br/icmob/clashroyalerandomcards/view/MainActivity.java
         mRandomCards = new CardBusiness().getCardsRandomAndFixed();
+        mRandomCardsChoice = mRandomCards;
+=======
+        mRandomCards = new CardBusiness(this).getCardsRandomAndFixed();
+>>>>>>> 31696bbc2dd4155a054f1fd79eaaa1e732c4090c:app/src/main/java/br/icmob/clashroyalerandomcards/MainActivity.java
         fillAverageCost(Utils.getAverageCost(mRandomCards));
         return mRandomCards;
     }
@@ -250,8 +255,12 @@ public class MainActivity extends AppCompatActivity {
      * @return list of fixed cards
      */
     public List<Card> getFixedCards() {
+<<<<<<< HEAD:app/src/main/java/br/icmob/clashroyalerandomcards/view/MainActivity.java
         mFixedCards = new CardBusiness().getFixedCards();
         return mFixedCards;
+=======
+        return new CardBusiness(this).getFixedCards();
+>>>>>>> 31696bbc2dd4155a054f1fd79eaaa1e732c4090c:app/src/main/java/br/icmob/clashroyalerandomcards/MainActivity.java
     }
 
     /**

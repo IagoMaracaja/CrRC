@@ -1,6 +1,8 @@
 package br.icmob.clashroyalerandomcards.business;
 
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -19,9 +21,10 @@ public class CardBusiness {
 
     private List<Card> cards;
     private CardsFixed cardsFixed = CardsFixed.getInstance();
-
-    public CardBusiness(){
-        cards = ReadCardService.getCards();
+    private Context mContext;
+    public CardBusiness(Context context){
+        this.mContext = context;
+        this.cards = ReadCardService.getCards(mContext);
     }
 
     /**
@@ -29,7 +32,7 @@ public class CardBusiness {
      * @return
      */
     public List<Card> getAllCards(){
-        return ReadCardService.getCards();
+        return ReadCardService.getCards(mContext);
     }
 
     /**

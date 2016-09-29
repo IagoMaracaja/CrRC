@@ -5,10 +5,10 @@ package br.icmob.clashroyalerandomcards.enuns;
  */
 
 public enum CardTypeEnum {
-    CONSTRUCTION(1),TROOP(2),SPELL(3);
+    CONSTRUCTION("Construção"),TROOP("Tropa"),SPELL("Feitiço");
 
-    public int typeCard;
-    CardTypeEnum(int value) {
+    public String typeCard;
+    CardTypeEnum(String value) {
         typeCard = value;
     }
 }
